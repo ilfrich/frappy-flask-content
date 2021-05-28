@@ -13,17 +13,18 @@ _DEFAULT_OPTIONS = {
     "manage_permission": None,
     "get_permission": None,
     "login_check_function": None,
+    "allow_get_without_auth": True
 }
 
 
 def register_endpoints(app, content_store, options={}):
-
     final_options = default_options(_DEFAULT_OPTIONS, options)
 
     api_prefix = final_options["api_prefix"]
     get_permission = final_options["get_permission"]
     manage_permission = final_options["manage_permission"]
     login_check_function = final_options["login_check_function"]
+    allow_get = final_options["allow_get_without_auth"]
 
     # login check for each endpoint
     def _check_login_state(permission=None):
@@ -42,7 +43,8 @@ def register_endpoints(app, content_store, options={}):
 
     @app.route(api_prefix, methods=["GET"])
     def get_content_list():
-        _check_login_state(get_permission)
+        if not allow_get:
+            _check_login_state(get_permission)
         references = request.args.get("references")
         content_type = request.args.get("contentType")
         if references is not None:
@@ -57,7 +59,8 @@ def register_endpoints(app, content_store, options={}):
 
     @app.route("{}/<content_id>".format(api_prefix), methods=["GET"])
     def get_content(content_id):
-        _check_login_state(get_permission)
+        if not allow_get:
+            _check_login_state(get_permission)
         content = _get_content(content_id)
         return jsonify(content.to_json())
 

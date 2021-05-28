@@ -35,3 +35,4 @@ Options for the `register_endpoints` function are:
 - `login_check_function` - default `None` - provide a function that performs authentication and uses Flask's `abort` in
  case the login / permission check fails. The function has 1 parameter for the required permission. You can use
  `check_login_state` from the `frappyflaskauth` package.
+- `allow_get_without_auth` - default `True` - whether an anonymous user can retrieve content via the GET endpoints.
